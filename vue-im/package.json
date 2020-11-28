@@ -8,7 +8,9 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@csstools/normalize.css": "^11.0.1",
     "@mdi/font": "^5.8.55",
+    "@microsoft/signalr": "^5.0.0",
     "core-js": "^3.6.5",
     "lodash": "^4.17.20",
     "postcss": "^8.1.10",
