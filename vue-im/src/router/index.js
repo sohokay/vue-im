@@ -58,7 +58,12 @@ export const constantRoutes = [
             {
                 path: '/',
                 component: () => import('@/views/home')
-            }
+            },
+            {
+                path: '/chat',
+                component: () => import('@/views/chat'),
+                hidden: true
+            },
         ]
     },
     {
@@ -66,6 +71,7 @@ export const constantRoutes = [
         component: () => import('@/views/login/index'),
         hidden: true
     },
+
     // {
     //     path: '/auth-redirect',
     //     component: () => import('@/views/login/auth-redirect'),

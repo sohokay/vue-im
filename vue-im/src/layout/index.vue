@@ -1,38 +1,28 @@
 <template>
   <div>
     <v-container fluid style="padding: 0;"><!-- 如果使用vue-router -->
-      <router-view></router-view>
-    </v-container>
-<!--    <router-view></router-view>-->
-    <v-footer app fixed style="padding: 0;">
-      <!-- -->
-      <v-bottom-navigation :value="value" color="teal" grow>
-        <v-btn>
-          <span>Recents</span>
-          <v-icon>mdi-history</v-icon>
-        </v-btn>
-        <v-btn>
-          <span>Favorites</span>
-          <v-icon>mdi-heart</v-icon>
-        </v-btn>
-        <v-btn>
-          <span>Nearby</span>
-          <v-icon>mdi-map-marker</v-icon>
-        </v-btn>
-        <v-btn>
-          <span>Nearby</span>
-          <v-icon>mdi-map-marker</v-icon>
-        </v-btn>
+      <keep-alive>
+        <router-view :key="key"></router-view>
+      </keep-alive>
 
-      </v-bottom-navigation>
-    </v-footer>
+    </v-container>
+    <!--    <router-view></router-view>-->
+
   </div>
 
 </template>
 
 <script>
+
+
 export default {
-name: "index"
+  name: "index",
+  computed: {
+    key() {
+      return this.$route.path
+    }
+  }
+
 }
 </script>
 

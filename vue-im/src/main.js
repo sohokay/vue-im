@@ -11,6 +11,14 @@ import 'vuetify/dist/vuetify.css'
 
 Vue.use(Vuetify)
 Vue.config.productionTip = false
+Vue.config.ignoredElements = [/^ion-/]
+
+
+
+
+
+
+
 
 new Vue({
     store,
