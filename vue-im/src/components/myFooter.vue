@@ -1,21 +1,18 @@
 <template>
   <v-footer app fixed style="padding: 0;">
     <!-- -->
-    <v-bottom-navigation :value="value" color="teal" grow>
-      <v-btn>
-        <span>Recents</span>
-        <v-icon>mdi-history</v-icon>
-      </v-btn>
-      <v-btn>
-        <span>Favorites</span>
+    <v-bottom-navigation color="teal" grow>
+
+      <v-btn @click="goTo('/')">
+        <span>首页</span>
         <v-icon>mdi-heart</v-icon>
       </v-btn>
-      <v-btn>
-        <span>Nearby</span>
+      <v-btn @click="goTo('/register')">
+        <span>注册</span>
         <v-icon>mdi-map-marker</v-icon>
       </v-btn>
-      <v-btn>
-        <span>Nearby</span>
+      <v-btn @click="goTo('/login')">
+        <span>登录</span>
         <v-icon>mdi-map-marker</v-icon>
       </v-btn>
 
@@ -25,7 +22,11 @@
 
 <script>
 export default {
-
+  methods: {
+    goTo(url) {
+      this.$router.push(url)
+    }
+  }
 }
 </script>
 

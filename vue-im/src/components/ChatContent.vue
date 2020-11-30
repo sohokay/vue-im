@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div id="appCapsule">
+  <div ref="views">
+    <div id="appCapsule" ref="appCapsule">
 
       <div class="message-divider">
         Friday, Sep 20, 10:40 AM
@@ -115,9 +115,16 @@ export default {
   },
   watch: {
     chatHistory: function (newValue, oldValue) {
-      console.log(newValue);
-      console.log(oldValue);
-    }
+      console.log('old', newValue);
+      console.log('new', oldValue);
+      this.$nextTick(() => {
+        // const h =this.$refs.appCapsule.innerHeight();
+        // console.log(h);
+        let middle= this.$refs["appCapsule"];
+        middle.scrollTop = middle.scrollHeight;
+        // $(".chatbox").scrollTop(h);
+      })
+    },
   },
 
   created() {

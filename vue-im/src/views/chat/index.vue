@@ -4,7 +4,101 @@
     <!-- * App Header -->
 
     <!-- App Capsule -->
-    <ChatContent :chatHistory="chatHistory"></ChatContent>
+    <div id="appCapsule" ref="appCapsule">
+
+      <div class="message-divider">
+        Friday, Sep 20, 10:40 AM
+      </div>
+
+      <div class="message-item">
+        <img src="../assets/img/sample/avatar/avatar2.jpg" alt="avatar" class="avatar">
+        <div class="content">
+          <div class="title">John</div>
+          <div class="bubble">
+            你瞅啥
+          </div>
+          <div class="footer">8:40 AM</div>
+        </div>
+      </div>
+
+      <div class="message-item">
+        <img src="../assets/img/sample/avatar/avatar2.jpg" alt="avatar" class="avatar">
+        <div class="content">
+          <div class="title">Marry</div>
+          <div class="bubble">
+            瞅你咋地
+          </div>
+          <div class="footer">10:40 AM</div>
+        </div>
+      </div>
+
+      <div class="message-item user">
+        <div class="content">
+          <div class="bubble">
+            你再说一遍
+          </div>
+          <div class="footer">10:40 AM</div>
+        </div>
+      </div>
+
+      <div class="message-divider">
+        Friday, Sep 20, 10:40 AM
+      </div>
+
+      <div class="message-item">
+        <img src="../assets/img/sample/avatar/avatar2.jpg" alt="avatar" class="avatar">
+        <div class="content">
+          <div class="title">Marry</div>
+          <div class="bubble">
+            <img src="../assets/img/sample/photo/1.jpg" alt="photo" class="imaged w160">
+          </div>
+          <div class="footer">10:40 AM</div>
+        </div>
+      </div>
+
+      <div class="message-item">
+        <img src="../assets/img/sample/avatar/avatar2.jpg" alt="avatar" class="avatar">
+        <div class="content">
+          <div class="title">Katie</div>
+          <div class="bubble">
+            漂亮!
+          </div>
+          <div class="footer">10:40 AM</div>
+        </div>
+      </div>
+
+      <div class="message-item">
+        <img src="../assets/img/sample/avatar/avatar2.jpg" alt="avatar" class="avatar">
+        <div class="content">
+          <div class="title">Marry</div>
+          <div class="bubble">
+            你好吗
+          </div>
+          <div class="footer">10:40 AM</div>
+        </div>
+      </div>
+
+      <div class="message-item user">
+        <div class="content">
+          <div class="bubble">
+            我很好
+          </div>
+          <div class="footer">10:40 AM</div>
+        </div>
+      </div>
+
+      <div class="message-item" v-for="(item,index) of chatHistory" :key="index" :class="{'user':item.type=='send'}">
+        <img src="../assets/img/sample/avatar/avatar2.jpg" alt="avatar" class="avatar">
+        <div class="content">
+          <div class="title">{{ item.userName }}</div>
+          <div class="bubble">
+            {{ item.content }}
+          </div>
+          <div class="footer">{{ item.time }}</div>
+        </div>
+      </div>
+    </div>
+<!--    <ChatContent :chatHistory="chatHistory"></ChatContent>-->
     <!-- * App Capsule -->
     <div class="chatFooter">
       <form>
@@ -37,16 +131,30 @@
 
 <script>
 import MyHeader from '@/components/MyHeader'
-import ChatContent from '@/components/ChatContent'
+// import ChatContent from '@/components/ChatContent'
 // import InputBox from '@/components/InputBox'
 import * as signalR from "@microsoft/signalr"
+import {chatUrl} from "@/api/chat"
 
 export default {
   name: "index",
   components: {
     MyHeader,
-    ChatContent,
+    // ChatContent,
     // InputBox
+  },
+  watch:{
+    chatHistory: function (newValue, oldValue) {
+      console.log('old', newValue);
+      console.log('new', oldValue);
+      this.$nextTick(() => {
+        // const h =this.$refs.appCapsule.innerHeight();
+        // console.log(h);
+        let middle= this.$refs["appCapsule"];
+        middle.scrollTop = middle.scrollHeight;
+        // $(".chatbox").scrollTop(h);
+      })
+    },
   },
   data() {
     return {
@@ -72,21 +180,28 @@ export default {
     }
   },
   mounted() {
-    // setTimeout(() => {
-    //
-    // }, 2000)
+    setTimeout(() => {
+      this.init_socket()
+      let middle= this.$refs["appCapsule"];
+      middle.scrollTop = middle.scrollHeight;
+
+    }, 2000)
   },
   created() {
 
+  },
 
+  destroyed() {
+    this.connection=[]
   },
   methods: {
     init_socket() {
       this.connection = null
       this.connection = new signalR.HubConnectionBuilder()
-          .withUrl("http://132.232.154.146:7777/chatsHub", {
+          .withUrl(chatUrl, {
             skipNegotiation: true,
-            transport: signalR.HttpTransportType.WebSockets
+            transport: signalR.HttpTransportType.WebSockets,
+            // accessTokenFactory: () => this.loginToken
           })
           .configureLogging(signalR.LogLevel.Information)
           .build();
@@ -96,7 +211,7 @@ export default {
 
       this.connection.on("On_UserMessage", (srcUserId, targetUserId, message, time) => {
         //函数原型: On_UserMessage(string srcUserId, string targetUserId, string message, string time);
-        console.info('On_UserMessage',srcUserId, targetUserId, message, time)
+        console.info('On_UserMessage', srcUserId, targetUserId, message, time)
         this.history.push({srcUserId, targetUserId, message, time})
         // debugger;
         this.chatHistory.push({
@@ -105,11 +220,18 @@ export default {
           time: time,
           content: message
         },)
+        this.$nextTick(() => {
+          // const h =this.$refs.appCapsule.innerHeight();
+          // console.log(h);
+          let middle= this.$refs["appCapsule"];
+          middle.scrollTop = middle.scrollHeight;
+          // $(".chatbox").scrollTop(h);
+        })
       });
       this.connection.on("On_GroupMessage", (srcUserId, targetGroupId, message, time) => {
         this.history.push({srcUserId, targetGroupId, message, time})
         //函数原型:On_GroupMessage(string srcUserId, string targetGroupId, string message, string time);
-        console.info('On_GroupMessage',srcUserId, targetGroupId, message, time);
+        console.info('On_GroupMessage', srcUserId, targetGroupId, message, time);
         // debugger;
       });
 
@@ -121,15 +243,21 @@ export default {
     },
     start() {
       try {
-        this.connection.start();
+        this.connection.start().catch((error)=>{
+          console.log('error',error);
+          // setTimeout(()=>{
+          //
+          // },1000)
+          setTimeout(this.start, 5000);
+        });
         console.log("SignalR Connected.");
       } catch (err) {
-        console.log(err);
+        console.log("连接断开了...五秒后重连",err);
         setTimeout(this.start, 5000);
       }
     },
     send() {
-      this.init_socket()
+
       if (this.message) {
         try {
           //函数原型: SendUserMessage(string srcUserId, string targetUserId, string message)
@@ -144,7 +272,7 @@ export default {
           console.log(err);
         }
 
-      } else{
+      } else {
         return false
       }
 
@@ -593,5 +721,89 @@ ion-icon {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+#appCapsule {
+  padding: 56px 0;
+  margin-bottom: env(safe-area-inset-bottom);
+  margin-top: env(safe-area-inset-top);
+}
+
+.imaged {
+  height: auto;
+  border-radius: 6px;
+}
+
+.imaged.w160 {
+  width: 160px !important;
+}
+
+.message-divider {
+  font-size: 12px;
+  text-align: center;
+  padding: 5px 0;
+  color: #A1A1A2;
+}
+
+.message-item {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 2px 16px;
+  margin-right: 60px;
+}
+
+.message-item .bubble {
+  padding: 10px 16px;
+  background: #FFF;
+  border-radius: 16px 16px 16px 0;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  color: #141515;
+  display: inline-block;
+  margin-top: 4px;
+  line-height: 1.4em;
+}
+
+.message-item .bubble .imaged {
+  margin: 0px -6px;
+}
+
+.message-item .title {
+  font-size: 12px;
+  font-weight: 500;
+  color: #4F5050;
+  line-height: 1.2em;
+  padding: 0 0 0 10px;
+}
+
+.message-item .footer {
+  font-size: 12px;
+  padding: 0 10px;
+  text-align: right;
+  line-height: 1em;
+  margin-top: 5px;
+  color: #141515;
+  opacity: .4;
+  height: 14px;
+}
+
+.message-item .avatar {
+  margin-right: 10px;
+  width: 32px;
+  height: auto;
+  border-radius: 100%;
+  margin-bottom: 18px;
+}
+
+.message-item.user {
+  justify-content: flex-end;
+  margin-right: 0;
+  margin-left: 60px;
+}
+
+.message-item.user .bubble {
+  background: #1E74FD;
+  color: #FFF;
+  border-radius: 16px 16px 0 16px;
 }
 </style>
