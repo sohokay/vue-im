@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="topdiv" style="overflow: auto;height: 100%;">
     <my-header></my-header>
     <!-- * App Header -->
 
@@ -151,7 +151,12 @@ export default {
         // const h =this.$refs.appCapsule.innerHeight();
         // console.log(h);
         let middle= this.$refs["appCapsule"];
-        middle.scrollTop = middle.scrollHeight;
+        let topdiv= this.$refs["topdiv"];
+        console.log('document.body.offsetHeight',document.body.offsetHeight);
+        console.log('document.body.clientHeight',document.body.clientHeight);
+        console.log(middle.scrollHeight);
+        topdiv.scrollTop = middle.scrollHeight;
+        // topdiv.scrollTop=middle
         // $(".chatbox").scrollTop(h);
       })
     },
@@ -180,6 +185,10 @@ export default {
     }
   },
   mounted() {
+    console.log('document.body.offsetHeight',document.body.offsetHeight);
+    console.log('document.body.clientHeight',document.body.clientHeight);
+    console.log('document.body.scrollTop',document.body.scrollTop);
+
     setTimeout(() => {
       this.init_socket()
       let middle= this.$refs["appCapsule"];
